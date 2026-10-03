@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>消息通知 - 福大失物招领</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="profile">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="profile.html" aria-label="返回个人中心">‹</a>
+      <h2>消息通知</h2>
+      <button class="back-btn" id="markRead" type="button" style="font-size:13px;width:auto;">全部已读</button>
+    </header>
+
+    <main>
+      <section id="msgList" class="msg-list" aria-live="polite"></section>
+      <section id="msgEmpty" class="empty" hidden>
+        <span class="empty-icon">🔔</span>
+        <span class="empty-text">暂无消息</span>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="profile" href="profile.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/messages.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>我的收藏 - 福大失物招领</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="profile">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="profile.html" aria-label="返回个人中心">‹</a>
+      <h2>我的收藏</h2>
+      <span class="header-placeholder"></span>
+    </header>
+
+    <main>
+      <section id="favList" class="list" aria-live="polite"></section>
+      <section id="favEmpty" class="empty" hidden>
+        <span class="empty-icon">⭐</span>
+        <span class="empty-text">还没有收藏的信息</span>
+        <a class="btn btn-primary" href="index.html" style="display:inline-flex;">去首页逛逛</a>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="profile" href="profile.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/favorites.js"></script>
+</body>
+</html>

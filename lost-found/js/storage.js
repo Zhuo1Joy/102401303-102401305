@@ -15,6 +15,8 @@
   // 信息列表与“本机发布 id 列表”各自的存储 key
   var ITEMS_KEY = 'lost_found_items_v1';
   var MINE_KEY = 'lost_found_mine_ids_v1';
+  var FAVORITES_KEY = 'lost_found_favorites_v1'; // 收藏的信息 id 列表
+  var PROFILE_KEY = 'lost_found_profile_v1';     // 个人资料（昵称等）
 
   // 物品类别（与原型设计保持一致，后续新增类别只需改这里）
   var CATEGORIES = ['校园卡', '钥匙', '雨伞', '耳机', '水杯', '书籍', '其他'];
@@ -135,12 +137,19 @@
     ];
   }
 
-  /** 初始化：首次运行写入示例数据 */
+  /** 初始化：首次运行写入示例数据、默认收藏与默认个人资料 */
   function initStorage() {
     if (localStorage.getItem(ITEMS_KEY) === null) {
       writeJSON(ITEMS_KEY, buildSeedItems());
       // 示例中 seed-2、seed-5 视为本机发布
       writeJSON(MINE_KEY, ['seed-2', 'seed-5']);
+    }
+    if (localStorage.getItem(FAVORITES_KEY) === null) {
+      // 默认收藏 1 条，方便演示“我的收藏”
+      writeJSON(FAVORITES_KEY, ['seed-1']);
+    }
+    if (localStorage.getItem(PROFILE_KEY) === null) {
+      writeJSON(PROFILE_KEY, { nickname: '福大同学', avatar: '🐱' });
     }
   }
 
@@ -202,7 +211,7 @@
     return ok && writeJSON(ITEMS_KEY, items);
   }
 
-  /** 删除信息（同时从“本机发布”中移除） */
+  /** 删除信息（同时从“本机发布”与收藏中移除） */
   function removeItem(id) {
     var items = readJSON(ITEMS_KEY, []);
     var next = items.filter(function (item) { return item.id !== id; });
@@ -212,6 +221,10 @@
     var mineIds = readJSON(MINE_KEY, []);
     var nextMine = mineIds.filter(function (mid) { return mid !== id; });
     if (nextMine.length !== mineIds.length) writeJSON(MINE_KEY, nextMine);
+
+    var favIds = readJSON(FAVORITES_KEY, []);
+    var nextFav = favIds.filter(function (fid) { return fid !== id; });
+    if (nextFav.length !== favIds.length) writeJSON(FAVORITES_KEY, nextFav);
 
     return changed;
   }
@@ -229,6 +242,62 @@
     });
   }
 
+  /* ---------- 收藏 ---------- */
+
+  function getFavoriteIds() {
+    return readJSON(FAVORITES_KEY, []);
+  }
+
+  function isFavorite(id) {
+    return getFavoriteIds().indexOf(id) !== -1;
+  }
+
+  /** 切换收藏状态，返回切换后的布尔值 */
+  function toggleFavorite(id) {
+    var ids = getFavoriteIds();
+    var idx = ids.indexOf(id);
+    if (idx === -1) {
+      ids.push(id);
+      writeJSON(FAVORITES_KEY, ids);
+      return true;
+    } else {
+      ids.splice(idx, 1);
+      writeJSON(FAVORITES_KEY, ids);
+      return false;
+    }
+  }
+
+  /** 读取收藏的全部信息（按发布时间倒序） */
+  function getFavoriteItems() {
+    var ids = getFavoriteIds();
+    return getItems().filter(function (item) {
+      return ids.indexOf(item.id) !== -1;
+    });
+  }
+
+  /* ---------- 个人资料 ---------- */
+
+  function getProfile() {
+    return readJSON(PROFILE_KEY, { nickname: '福大同学', avatar: '🐱' });
+  }
+
+  function updateProfile(patch) {
+    var profile = getProfile();
+    Object.keys(patch).forEach(function (k) {
+      profile[k] = patch[k];
+    });
+    writeJSON(PROFILE_KEY, profile);
+    return profile;
+  }
+
+  /** 清空全部本地数据（设置页用） */
+  function clearAll() {
+    localStorage.removeItem(ITEMS_KEY);
+    localStorage.removeItem(MINE_KEY);
+    localStorage.removeItem(FAVORITES_KEY);
+    localStorage.removeItem(PROFILE_KEY);
+  }
+
   // 暴露到全局，页面脚本通过 Storage.xxx 调用
   global.Storage = {
     CATEGORIES: CATEGORIES,
@@ -239,6 +308,12 @@
     updateStatus: updateStatus,
     removeItem: removeItem,
     isMine: isMine,
-    getMineItems: getMineItems
+    getMineItems: getMineItems,
+    isFavorite: isFavorite,
+    toggleFavorite: toggleFavorite,
+    getFavoriteItems: getFavoriteItems,
+    getProfile: getProfile,
+    updateProfile: updateProfile,
+    clearAll: clearAll
   };
 })(window);

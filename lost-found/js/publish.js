@@ -137,9 +137,9 @@
 
     var record = Storage.addItem(values);
     UI.toast('🎉 发布成功');
-    // 短暂延迟后跳转详情页，让用户看到成功提示
+    // 短暂延迟后跳转到发布成功页，让用户看到成功提示
     setTimeout(function () {
-      location.href = 'detail.html?id=' + encodeURIComponent(record.id) + '&from=publish';
+      location.href = 'success.html?id=' + encodeURIComponent(record.id);
     }, 600);
   });
 })();

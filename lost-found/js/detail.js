@@ -65,6 +65,10 @@
       doneActionWrap.hidden = false;
       markBtn.textContent = isLost ? '✅ 标记为已找到' : '✅ 标记为已归还';
     }
+
+    // 收藏按钮文案
+    var favBtn = UI.$('#favBtn');
+    favBtn.textContent = Storage.isFavorite(item.id) ? '⭐ 已收藏' : '☆ 收藏';
   }
 
   /* ---------- 复制联系方式 ---------- */
@@ -91,6 +95,14 @@
     } else {
       UI.toast('更新失败，请重试', 'error');
     }
+  });
+
+  /* ---------- 收藏 / 取消收藏 ---------- */
+
+  UI.$('#favBtn').addEventListener('click', function () {
+    var favored = Storage.toggleFavorite(item.id);
+    render();
+    UI.toast(favored ? '已加入收藏' : '已取消收藏');
   });
 
   wrap.hidden = false;
