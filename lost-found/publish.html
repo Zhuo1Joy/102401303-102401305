@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>福大失物招领 - 发布信息</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="publish">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="index.html" aria-label="返回首页">‹</a>
+      <h2>发布信息</h2>
+      <span class="header-placeholder"></span>
+    </header>
+
+    <main>
+      <form id="publishForm" class="form" novalidate>
+        <!-- 类型选择 -->
+        <div class="type-switch" role="radiogroup" aria-label="信息类型">
+          <button type="button" class="type-option selected-lost" data-type="lost" role="radio" aria-checked="true">
+            <span class="type-emoji">😥</span>我丢了东西（寻物）
+          </button>
+          <button type="button" class="type-option" data-type="found" role="radio" aria-checked="false">
+            <span class="type-emoji">🙋</span>我捡到东西（招领）
+          </button>
+        </div>
+        <input type="hidden" id="type" name="type" value="lost">
+
+        <!-- 物品名称 -->
+        <div class="form-group" data-field="title">
+          <label for="title"><span class="required">*</span>物品名称</label>
+          <input class="form-control" type="text" id="title" name="title"
+                 maxlength="30" placeholder="例如：黑色卡套校园卡">
+          <p class="error-text">请填写物品名称（不超过 30 个字）</p>
+        </div>
+
+        <!-- 类别 -->
+        <div class="form-group" data-field="category">
+          <label for="category"><span class="required">*</span>物品类别</label>
+          <select class="form-control" id="category" name="category">
+            <option value="">请选择类别</option>
+          </select>
+        </div>
+
+        <!-- 地点 -->
+        <div class="form-group" data-field="location">
+          <label for="location"><span class="required">*</span>丢失 / 拾取地点</label>
+          <input class="form-control" type="text" id="location" name="location"
+                 maxlength="50" list="locationTips" placeholder="例如：图书馆二楼自习区">
+          <datalist id="locationTips">
+            <option value="旗山校区图书馆"></option>
+            <option value="旗山校区西三教学楼"></option>
+            <option value="紫荆园食堂"></option>
+            <option value="玫瑰园食堂"></option>
+            <option value="学生活动中心"></option>
+            <option value="体育馆"></option>
+            <option value="铜盘校区教学楼"></option>
+          </datalist>
+          <p class="error-text">请填写地点（不超过 50 个字）</p>
+        </div>
+
+        <!-- 时间 -->
+        <div class="form-group" data-field="time">
+          <label for="time"><span class="required">*</span>丢失 / 拾取时间</label>
+          <input class="form-control" type="datetime-local" id="time" name="time">
+          <p class="error-text">请选择时间，且不能晚于当前时间</p>
+        </div>
+
+        <!-- 描述 -->
+        <div class="form-group" data-field="description">
+          <label for="description"><span class="required">*</span>物品描述</label>
+          <textarea class="form-control" id="description" name="description"
+                    maxlength="300" placeholder="请描述物品特征，例如颜色、挂件、书本笔记等（不超过 300 字）"></textarea>
+          <p class="error-text">请填写物品描述（5 个字以上）</p>
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="form-group" data-field="contact">
+          <label for="contact"><span class="required">*</span>联系方式</label>
+          <input class="form-control" type="text" id="contact" name="contact"
+                 maxlength="50" placeholder="QQ / 微信 / 手机号，例如：QQ 123456789">
+          <p class="error-text">请填写联系方式（至少 4 个字符）</p>
+        </div>
+
+        <!-- 发布者昵称 -->
+        <div class="form-group" data-field="publisher">
+          <label for="publisher"><span class="required">*</span>发布者昵称</label>
+          <input class="form-control" type="text" id="publisher" name="publisher"
+                 maxlength="20" placeholder="例如：陈同学">
+          <p class="error-text">请填写昵称（不超过 20 个字）</p>
+        </div>
+
+        <p class="form-tip">ℹ️ 信息仅保存在本机浏览器中，请勿在联系方式中填写敏感隐私信息。</p>
+
+        <div class="submit-bar">
+          <button type="submit" class="btn btn-primary btn-block">立即发布</button>
+        </div>
+      </form>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="mine" href="mine.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/publish.js"></script>
+</body>
+</html>
