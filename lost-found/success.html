@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>发布成功 - 福大失物招领</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="page-header">
+      <span class="header-placeholder"></span>
+      <h2>发布结果</h2>
+      <span class="header-placeholder"></span>
+    </header>
+
+    <main>
+      <div class="success-wrap" id="successWrap">
+        <!-- 成功图标 -->
+        <div class="success-icon">
+          <svg viewBox="0 0 52 52" width="72" height="72" aria-hidden="true">
+            <circle class="success-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="success-check" fill="none" d="M14 27 l8 8 l16 -18"/>
+          </svg>
+        </div>
+        <h1 class="success-title">发布成功！</h1>
+        <p class="success-desc">你的信息已发布，记得留意联系方式哦～</p>
+
+        <!-- 刚发布的信息摘要 -->
+        <div class="success-card" id="successCard" hidden>
+          <div class="success-card-top">
+            <span class="badge" id="sType"></span>
+            <span class="status" id="sStatus"></span>
+          </div>
+          <h3 id="sTitle" class="success-card-title"></h3>
+          <div class="success-card-meta">
+            <span>📍 <span id="sLocation"></span></span>
+            <span>🕐 <span id="sTime"></span></span>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="success-actions">
+          <a class="btn btn-primary btn-block" href="index.html">🏠 返回首页</a>
+          <a class="btn btn-outline btn-block" id="viewDetail" href="#">👀 查看详情</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .success-wrap {
+      padding: 50px 24px 24px;
+      text-align: center;
+    }
+    .success-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .success-circle {
+      stroke: #15a05c;
+      stroke-width: 3;
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      animation: drawCircle 0.6s ease forwards;
+    }
+    .success-check {
+      stroke: #15a05c;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: drawCheck 0.35s 0.5s ease forwards;
+    }
+    @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .success-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .success-desc {
+      color: var(--text-sub);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .success-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .success-card-top {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .success-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+    .success-actions .btn {
+      margin-bottom: 12px;
+    }
+  </style>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    Storage.initStorage();
+
+    // 从 URL 取刚发布的信息 id，渲染摘要
+    var id = UI.getQuery('id');
+    var item = id ? Storage.getItem(id) : null;
+
+    if (item) {
+      var card = UI.$('#successCard');
+      card.hidden = false;
+      var typeBadge = UI.$('#sType');
+      typeBadge.textContent = UI.TYPE_TEXT[item.type];
+      typeBadge.className = 'badge ' + (item.type === 'lost' ? 'badge-lost' : 'badge-found');
+
+      var statusEl = UI.$('#sStatus');
+      statusEl.textContent = UI.statusText(item);
+      statusEl.className = 'status status-active';
+
+      UI.$('#sTitle').textContent = item.title;
+      UI.$('#sLocation').textContent = item.location;
+      UI.$('#sTime').textContent = UI.formatDateTime(item.time);
+
+      UI.$('#viewDetail').href = 'detail.html?id=' + encodeURIComponent(item.id);
+    } else {
+      // 没有 id 时隐藏详情入口
+      UI.$('#viewDetail').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

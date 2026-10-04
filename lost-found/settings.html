@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>设置 - 福大失物招领</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="profile">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="profile.html" aria-label="返回个人中心">‹</a>
+      <h2>设置</h2>
+      <span class="header-placeholder"></span>
+    </header>
+
+    <main class="form">
+      <!-- 昵称 -->
+      <div class="form-group" data-field="nickname">
+        <label for="nickname">昵称</label>
+        <input class="form-control" type="text" id="nickname" maxlength="20" placeholder="请输入昵称">
+      </div>
+
+      <!-- 头像 -->
+      <div class="form-group">
+        <label>头像</label>
+        <div class="avatar-options" id="avatarOptions">
+          <span class="avatar-opt" data-avatar="🐱">🐱</span>
+          <span class="avatar-opt" data-avatar="🐶">🐶</span>
+          <span class="avatar-opt" data-avatar="🐰">🐰</span>
+          <span class="avatar-opt" data-avatar="🦊">🦊</span>
+          <span class="avatar-opt" data-avatar="🐼">🐼</span>
+          <span class="avatar-opt" data-avatar="🦁">🦁</span>
+          <span class="avatar-opt" data-avatar="🐯">🐯</span>
+          <span class="avatar-opt" data-avatar="🐨">🐨</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block" id="saveProfile">保存资料</button>
+
+      <hr class="divider">
+
+      <!-- 数据管理 -->
+      <section class="info-panel">
+        <div class="info-row">
+          <span class="info-label">数据存储</span>
+          <span class="info-value" style="color:var(--text-sub);font-size:13px;">
+            全部保存在本机浏览器 localStorage
+          </span>
+        </div>
+      </section>
+
+      <button type="button" class="btn btn-danger-outline btn-block" id="resetData" style="margin-top:6px;">
+        🗑 清除全部数据并恢复示例
+      </button>
+
+      <hr class="divider">
+
+      <!-- 关于 -->
+      <section class="about">
+        <div class="about-row"><span>应用名称</span><span>福大失物招领</span></div>
+        <div class="about-row"><span>版本</span><span>MVP v1.0</span></div>
+        <div class="about-row"><span>说明</span><span class="about-val">福州大学软件工程结对作业</span></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="profile" href="profile.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

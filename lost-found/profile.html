@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>个人中心 - 福大失物招领</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="profile">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="index.html" aria-label="返回首页">‹</a>
+      <h2>个人中心</h2>
+      <a class="back-btn" href="settings.html" aria-label="设置" style="text-align:right;">⚙️</a>
+    </header>
+
+    <main>
+      <!-- 个人信息卡 -->
+      <section class="profile-card">
+        <div class="profile-avatar" id="pAvatar">🐱</div>
+        <div class="profile-info">
+          <div class="profile-name" id="pName">福大同学</div>
+          <div class="profile-tip">点击右上角 ⚙️ 可修改昵称</div>
+        </div>
+      </section>
+
+      <!-- 数据统计 -->
+      <section class="profile-stats">
+        <div class="stat-box">
+          <span class="stat-num" id="pTotal">0</span>
+          <span class="stat-label">发布</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="pDone">0</span>
+          <span class="stat-label">已找回</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="pFav">0</span>
+          <span class="stat-label">收藏</span>
+        </div>
+      </section>
+
+      <!-- 快捷入口 -->
+      <section class="entry-list">
+        <a class="entry-item" href="mine.html">
+          <span class="entry-icon">📋</span>
+          <span class="entry-text">我的发布</span>
+          <span class="entry-arrow">›</span>
+        </a>
+        <a class="entry-item" href="favorites.html">
+          <span class="entry-icon">⭐</span>
+          <span class="entry-text">我的收藏</span>
+          <span class="entry-arrow">›</span>
+        </a>
+        <a class="entry-item" href="messages.html">
+          <span class="entry-icon">🔔</span>
+          <span class="entry-text">消息通知</span>
+          <span class="entry-arrow">›</span>
+        </a>
+        <a class="entry-item" href="settings.html">
+          <span class="entry-icon">⚙️</span>
+          <span class="entry-text">设置</span>
+          <span class="entry-arrow">›</span>
+        </a>
+      </section>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="profile" href="profile.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

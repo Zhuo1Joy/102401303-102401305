@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>福大失物招领 - 我的发布</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="profile">
+  <div class="app">
+    <header class="page-header">
+      <a class="back-btn" href="index.html" aria-label="返回首页">‹</a>
+      <h2>我的发布</h2>
+      <span class="header-placeholder"></span>
+    </header>
+
+    <main>
+      <!-- 本机数据统计 -->
+      <div class="mine-stats">
+        <div class="stat-box">
+          <span class="stat-num" id="statTotal">0</span>
+          <span class="stat-label">发布总数</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="statActive">0</span>
+          <span class="stat-label">进行中</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="statDone">0</span>
+          <span class="stat-label">已完成</span>
+        </div>
+      </div>
+
+      <!-- 我的发布列表 -->
+      <section id="mineList" class="list" aria-live="polite"></section>
+
+      <!-- 空状态 -->
+      <section id="mineEmpty" class="empty" hidden>
+        <span class="empty-icon">📭</span>
+        <span class="empty-text">你还没有发布过信息</span>
+        <a class="btn btn-primary" href="publish.html" style="display:inline-flex;">➕ 去发布一条</a>
+      </section>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <a class="nav-item" data-nav="index" href="index.html">
+        <span class="nav-icon">🏠</span><span>首页</span>
+      </a>
+      <a class="nav-item nav-publish" data-nav="publish" href="publish.html">
+        <span class="nav-icon">➕</span><span>发布</span>
+      </a>
+      <a class="nav-item" data-nav="profile" href="profile.html">
+        <span class="nav-icon">👤</span><span>我的</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/mine.js"></script>
+</body>
+</html>
