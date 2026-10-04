@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -34,6 +34,10 @@
             <span class="info-value" id="dCategory"></span>
           </div>
           <div class="info-row">
+            <span class="info-label">所属校区</span>
+            <span class="info-value" id="dCampus"></span>
+          </div>
+          <div class="info-row">
             <span class="info-label" id="dPlaceLabel">丢失地点</span>
             <span class="info-value" id="dLocation"></span>
           </div>
@@ -51,6 +55,12 @@
         <section class="info-panel">
           <p class="panel-title">📝 物品描述</p>
           <p class="panel-content" id="dDescription"></p>
+        </section>
+
+        <!-- 物品图片 -->
+        <section class="info-panel" id="dGalleryPanel" hidden>
+          <p class="panel-title">🖼 物品图片</p>
+          <div class="detail-gallery" id="dGallery"></div>
         </section>
 
         <!-- 联系方式 -->
@@ -83,6 +93,11 @@
       </div>
     </main>
 
+    <!-- 全屏看图层 -->
+    <div class="img-viewer" id="imgViewer" hidden>
+      <img id="imgViewerImg" src="" alt="物品图片大图">
+    </div>
+
     <!-- 底部导航 -->
     <nav class="bottom-nav">
       <a class="nav-item" data-nav="index" href="index.html">
@@ -97,8 +112,8 @@
     </nav>
   </div>
 
-  <script src="js/storage.js"></script>
-  <script src="js/common.js"></script>
-  <script src="js/detail.js"></script>
+  <script src="js/storage.js?v=2"></script>
+  <script src="js/common.js?v=2"></script>
+  <script src="js/detail.js?v=2"></script>
 </body>
 </html>

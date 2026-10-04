@@ -13,7 +13,8 @@
   var state = {
     keyword: '',
     type: 'all',       // all | lost | found
-    category: 'all'    // all | 具体类别
+    category: 'all',   // all | 具体类别
+    campus: Storage.getCampus()  // 校区筛选
   };
 
   var listEl = UI.$('#itemList');
@@ -41,6 +42,9 @@
       // 类别筛选
       if (state.category !== 'all' && item.category !== state.category) return false;
 
+      // 校区筛选
+      if (Storage.itemCampus(item) !== state.campus) return false;
+
       // 关键词：匹配物品名称、描述、地点、类别
       if (keyword) {
         var haystack = [item.title, item.description, item.location, item.category]
@@ -52,11 +56,21 @@
 
     var emptyText = keyword
       ? '没有找到与“' + state.keyword.trim() + '”相关的信息，换个关键词试试～'
-      : '当前筛选条件下暂无信息';
+      : state.campus + ' 校区暂无相关信息';
     UI.renderCardList(listEl, filtered, emptyEl, emptyText);
   }
 
   /* ---------- 事件绑定 ---------- */
+
+  // 校区切换（原生 select，记录到 Storage 并按校区过滤列表）
+  var campusSelect = UI.$('#campusSelect');
+  campusSelect.value = state.campus;
+  campusSelect.addEventListener('change', function () {
+    state.campus = campusSelect.value;
+    Storage.setCampus(campusSelect.value);
+    render();
+    UI.toast('已切换到' + campusSelect.value);
+  });
 
   // 搜索（input 事件实时触发）
   searchInput.addEventListener('input', function () {

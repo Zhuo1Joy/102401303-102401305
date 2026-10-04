@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -27,6 +27,9 @@
         </div>
         <input type="hidden" id="type" name="type" value="lost">
 
+        <!-- 校区由首页选择，发布页不再重复选择 -->
+        <input type="hidden" id="campus" name="campus" value="">
+
         <!-- 物品名称 -->
         <div class="form-group" data-field="title">
           <label for="title"><span class="required">*</span>物品名称</label>
@@ -41,22 +44,37 @@
           <select class="form-control" id="category" name="category">
             <option value="">请选择类别</option>
           </select>
+          <input class="form-control" type="text" id="categoryCustom" name="categoryCustom"
+                 maxlength="10" placeholder="请输入自定义类别（1-10 个字）" hidden>
+          <p class="error-text" id="categoryError">请选择物品类别</p>
+        </div>
+
+        <!-- 物品图片（选填，最多 3 张） -->
+        <div class="form-group">
+          <label>物品图片（选填，最多 3 张）</label>
+          <div class="img-uploader">
+            <div class="img-preview-list" id="imgPreviewList"></div>
+            <label class="img-add" id="imgAddBtn" for="imgInput">
+              <span class="img-add-plus">📷</span>
+              <span class="img-add-text">添加图片</span>
+            </label>
+            <input type="file" id="imgInput" accept="image/*" multiple hidden>
+          </div>
         </div>
 
         <!-- 地点 -->
         <div class="form-group" data-field="location">
-          <label for="location"><span class="required">*</span>丢失 / 拾取地点</label>
-          <input class="form-control" type="text" id="location" name="location"
-                 maxlength="50" list="locationTips" placeholder="例如：图书馆二楼自习区">
-          <datalist id="locationTips">
-            <option value="旗山校区图书馆"></option>
-            <option value="旗山校区西三教学楼"></option>
-            <option value="紫荆园食堂"></option>
-            <option value="玫瑰园食堂"></option>
-            <option value="学生活动中心"></option>
-            <option value="体育馆"></option>
-            <option value="铜盘校区教学楼"></option>
-          </datalist>
+          <label for="location">
+            <span class="required">*</span>丢失 / 拾取地点
+            <span class="field-hint">可手动输入也可右侧快速选择~</span>
+          </label>
+          <div class="location-row">
+            <input class="form-control" type="text" id="location" name="location"
+                   maxlength="50" placeholder="例如：图书馆二楼自习区">
+            <select class="location-select" id="locationQuickSelect" aria-label="快速选择地点">
+              <option value="">快速选择</option>
+            </select>
+          </div>
           <p class="error-text">请填写地点（不超过 50 个字）</p>
         </div>
 
@@ -111,10 +129,11 @@
         <span class="nav-icon">👤</span><span>我的</span>
       </a>
     </nav>
+
   </div>
 
-  <script src="js/storage.js"></script>
-  <script src="js/common.js"></script>
-  <script src="js/publish.js"></script>
+  <script src="js/storage.js?v=5"></script>
+  <script src="js/common.js?v=5"></script>
+  <script src="js/publish.js?v=5"></script>
 </body>
 </html>

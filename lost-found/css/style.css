@@ -80,7 +80,10 @@ input, select, textarea {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: linear-gradient(135deg, #e53935, #c62828);
+  /* 白楼红花水彩素材 + 红色半透明蒙版（约 75% 不透明，参考 figma 亮度） */
+  background:
+    linear-gradient(135deg, rgba(229, 57, 53, 0.75), rgba(198, 40, 40, 0.78)),
+    url('../img/building-flower.jpg') no-repeat center 35% / cover;
   color: #fff;
   padding: 14px 16px 12px;
 }
@@ -88,7 +91,48 @@ input, select, textarea {
 .app-header h1 {
   font-size: 19px;
   font-weight: 700;
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 标题行：左标题、右校区切换 */
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 10px;
+}
+
+.campus-select {
+  flex-shrink: 0;
+  max-width: 132px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+.campus-select:active {
+  background-color: rgba(255, 255, 255, 0.32);
+}
+
+.campus-select option {
+  color: #333;
+  background: #fff;
 }
 
 .app-header .subtitle {
@@ -130,15 +174,18 @@ input, select, textarea {
   align-items: center;
   height: 50px;
   padding: 0 12px;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
+  /* 与首页头部一致：水彩素材 + 红色半透明蒙版 */
+  background:
+    linear-gradient(135deg, rgba(229, 57, 53, 0.75), rgba(198, 40, 40, 0.78)),
+    url('../img/building-flower.jpg') no-repeat center 35% / cover;
+  border-bottom: none;
 }
 
 .page-header .back-btn {
   width: 38px;
   height: 38px;
   font-size: 20px;
-  color: var(--text-main);
+  color: #fff;
 }
 
 .page-header h2 {
@@ -146,6 +193,7 @@ input, select, textarea {
   text-align: center;
   font-size: 17px;
   font-weight: 600;
+  color: #fff;
 }
 
 .page-header .header-placeholder {
@@ -950,4 +998,658 @@ textarea.form-control {
   font-size: 13px;
   color: var(--text-sub);
   line-height: 1.5;
+}
+
+/* ============================================================
+   启动页 & 登录页（index 首屏引导，由 js/auth.js 控制显隐）
+   ============================================================ */
+
+/* 全屏引导视图：fixed 覆盖主界面，带淡入淡出 */
+.gate-view {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.gate-view[hidden] {
+  display: none;
+}
+
+.gate-view.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 引导期间锁住底层页面滚动 */
+body.gate-open {
+  overflow: hidden;
+}
+
+/* ---------- 启动页 ---------- */
+.splash-view {
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+.splash-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 红色渐变遮罩：压住水彩图明度，保证文字可读、统一品牌色 */
+.splash-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(198, 40, 40, 0.55) 0%,
+    rgba(183, 28, 28, 0.28) 42%,
+    rgba(127, 20, 20, 0.62) 100%);
+}
+
+.splash-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.splash-logo {
+  font-size: 84px;
+  line-height: 1;
+  margin-bottom: 18px;
+  animation: floatY 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+
+.splash-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.splash-subtitle {
+  font-size: 14px;
+  opacity: 0.95;
+  margin-bottom: 44px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.splash-bar {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.splash-bar .bar-inner {
+  height: 100%;
+  width: 0;
+  background: #fff;
+  border-radius: 999px;
+  animation: loadBar 2.3s ease forwards;
+}
+
+.splash-skip {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.splash-footer {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  opacity: 0.85;
+  z-index: 1;
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes loadBar {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+/* ---------- 登录页 ---------- */
+.login-view {
+  background: var(--bg);
+  overflow-y: auto;
+}
+
+.login-hero {
+  position: relative;
+  height: 236px;
+  flex-shrink: 0;
+}
+
+.login-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.login-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(229, 57, 53, 0.12) 0%,
+    rgba(198, 40, 40, 0.42) 55%,
+    rgba(183, 28, 28, 0.78) 100%);
+}
+
+.login-hero-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.login-logo {
+  font-size: 54px;
+  line-height: 1;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+}
+
+.login-app-name {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.login-slogan {
+  font-size: 13px;
+  opacity: 0.92;
+}
+
+/* 白色圆角面板：上滑卡片叠在水彩图上 */
+.login-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  margin-top: -18px;
+  border-radius: 20px 20px 0 0;
+  background: var(--bg);
+  box-shadow: 0 -4px 16px rgba(31, 36, 48, 0.08);
+  padding: 24px 22px 30px;
+}
+
+.login-title {
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.login-tip {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin: 6px 0 18px;
+}
+
+/* 带图标的输入框容器 */
+.input-wrap {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  background: #fff;
+  border: 1px solid #dcdfe8;
+  border-radius: 12px;
+  padding: 0 12px;
+  transition: border-color 0.15s;
+}
+
+.input-wrap:focus-within {
+  border-color: var(--primary);
+}
+
+.form-group.has-error .input-wrap {
+  border-color: var(--danger);
+}
+
+.input-icon {
+  font-size: 15px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.input-wrap .form-control {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  outline: none;
+}
+
+.pwd-toggle {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--text-sub);
+}
+
+.login-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0 16px;
+}
+
+.link-btn {
+  font-size: 13px;
+  color: var(--primary);
+}
+
+.login-btn {
+  margin-top: 4px;
+  background: linear-gradient(135deg, #e53935, #c62828);
+}
+
+.login-links {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.login-agreement {
+  margin-top: 26px;
+  font-size: 11px;
+  color: var(--text-sub);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   发布成功页（荷花亭榭全屏背景）
+   ============================================================ */
+.success-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.success-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;    /* 建筑主体居中 */
+  display: block;
+}
+.success-bg .success-bg-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(198, 40, 40, 0.35) 0%,
+    rgba(183, 28, 28, 0.55) 50%,
+    rgba(127, 20, 20, 0.72) 100%);
+}
+
+.success-view {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  color: #fff;
+}
+
+.success-view .success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.success-view .success-circle {
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: drawCircle 0.6s ease forwards;
+}
+.success-view .success-check {
+  stroke: #fff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: drawCheck 0.35s 0.5s ease forwards;
+}
+@keyframes drawCircle { to { stroke-dashoffset: 0; } }
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+.success-view .success-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.success-view .success-desc {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 24px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.25);
+}
+
+.success-view .success-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  padding: 18px 16px;
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 28px;
+}
+.success-view .success-card-top {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.success-view .success-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.success-view .success-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.success-view .success-actions {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.success-view .success-actions .btn-primary {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.success-view .success-actions .btn-outline {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* ============================================================
+   发布页：地点提示、图片上传、底部弹层
+   ============================================================ */
+
+/* 地点 label 旁的灰色说明 */
+.field-hint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-sub);
+  margin-left: 6px;
+}
+
+/* 地点输入框 + 右侧快捷选择下拉 */
+.location-row {
+  display: flex;
+  gap: 8px;
+}
+
+.location-row .form-control {
+  flex: 1;
+}
+
+.location-select {
+  width: 110px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 10px;
+  background: #fff;
+  font-size: 14px;
+  color: var(--text-sub);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+/* ---------- 图片上传 ---------- */
+.img-uploader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.img-preview-list {
+  display: contents; /* 让预览项与添加按钮同属一个 flex 流 */
+}
+
+.img-preview-item {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.img-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.img-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  line-height: 20px;
+  text-align: center;
+  padding: 0;
+}
+
+.img-add {
+  width: 78px;
+  height: 78px;
+  border: 1.5px dashed #d0d4de;
+  border-radius: 12px;
+  background: #fafbfc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-sub);
+  text-align: center;
+}
+
+.img-add:active {
+  background: var(--bg);
+}
+
+.img-add .img-add-plus {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.img-add .img-add-text {
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* ---------- 底部弹层（校区切换 / 地点快选共用） ---------- */
+.sheet-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.45);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.sheet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 81;
+  width: 100%;
+  max-width: 480px;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sheet-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sheet-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text-sub);
+  font-size: 13px;
+  padding: 0;
+}
+
+.sheet-body {
+  overflow-y: auto;
+  padding: 8px 12px 18px;
+}
+
+.sheet-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 13px 10px;
+  font-size: 15px;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--line);
+  background: none;
+}
+
+.sheet-option:last-child {
+  border-bottom: none;
+}
+
+.sheet-option:active {
+  background: var(--bg);
+}
+
+.sheet-option.selected {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ---------- 卡片缩略图 ---------- */
+.card-imgs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 2px 0 10px;
+  padding-bottom: 2px;
+}
+
+.card-imgs img {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+/* ---------- 详情页画廊 ---------- */
+.detail-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.detail-gallery img {
+  width: calc((100% - 16px) / 3);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+/* ---------- 全屏看图 ---------- */
+.img-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.img-viewer[hidden] {
+  display: none;
+}
+
+.img-viewer img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
 }

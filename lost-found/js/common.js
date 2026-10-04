@@ -86,6 +86,12 @@
   function renderCard(item) {
     var typeClass = item.type === 'lost' ? 'badge-lost' : 'badge-found';
     var statusClass = item.status === 'done' ? 'status-done' : 'status-active';
+    var imgs = Array.isArray(item.images) ? item.images : [];
+    var imgHtml = imgs.length
+      ? '<div class="card-imgs">' + imgs.map(function (src) {
+          return '<img src="' + src + '" alt="物品图片" loading="lazy">';
+        }).join('') + '</div>'
+      : '';
     return '' +
       '<a class="card" href="detail.html?id=' + encodeURIComponent(item.id) + '">' +
         '<div class="card-top">' +
@@ -94,6 +100,7 @@
         '</div>' +
         '<h3 class="card-title">' + escapeHtml(item.title) + '</h3>' +
         '<p class="card-desc">' + escapeHtml(item.description) + '</p>' +
+        imgHtml +
         '<div class="card-meta">' +
           '<span class="meta-item">📍 ' + escapeHtml(item.location) + '</span>' +
           '<span class="meta-item">🕐 ' + escapeHtml(formatDateTime(item.time)) + '</span>' +

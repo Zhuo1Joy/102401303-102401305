@@ -48,11 +48,31 @@
     UI.$('#dTitle').textContent = item.title;
     UI.$('#dCreatedAt').textContent = UI.formatDateTime(new Date(item.createdAt));
     UI.$('#dCategory').textContent = item.category;
+    UI.$('#dCampus').textContent = Storage.itemCampus(item);
     UI.$('#dLocation').textContent = item.location;
     UI.$('#dTime').textContent = UI.formatDateTime(item.time);
     UI.$('#dDescription').textContent = item.description;
     UI.$('#dContact').textContent = item.contact;
     UI.$('#dPublisher').textContent = item.publisher;
+
+    // 物品图片画廊（无图则隐藏整个面板）
+    var galleryPanel = UI.$('#dGalleryPanel');
+    var gallery = UI.$('#dGallery');
+    var imgs = Array.isArray(item.images) ? item.images : [];
+    if (imgs.length > 0) {
+      galleryPanel.hidden = false;
+      gallery.innerHTML = '';
+      imgs.forEach(function (src, index) {
+        var img = document.createElement('img');
+        img.src = src;
+        img.alt = '物品图片 ' + (index + 1);
+        img.loading = 'lazy';
+        img.addEventListener('click', function () { openViewer(src); });
+        gallery.appendChild(img);
+      });
+    } else {
+      galleryPanel.hidden = true;
+    }
 
     // 寻物/招领场景下的字段措辞
     UI.$('#dPlaceLabel').textContent = isLost ? '丢失地点' : '拾取地点';
@@ -70,6 +90,19 @@
     var favBtn = UI.$('#favBtn');
     favBtn.textContent = Storage.isFavorite(item.id) ? '⭐ 已收藏' : '☆ 收藏';
   }
+
+  /* ---------- 全屏看图 ---------- */
+
+  var viewer = UI.$('#imgViewer');
+  var viewerImg = UI.$('#imgViewerImg');
+  function openViewer(src) {
+    viewerImg.src = src;
+    viewer.hidden = false;
+  }
+  viewer.addEventListener('click', function () {
+    viewer.hidden = true;
+    viewerImg.src = '';
+  });
 
   /* ---------- 复制联系方式 ---------- */
 
