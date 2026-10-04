@@ -1,22 +1,40 @@
 /**
  * publish.js —— 发布页逻辑
- * 功能：寻物/招领类型切换、类别选项填充、默认时间、
- * 表单校验（逐项提示）、保存到 localStorage 并跳转详情页。
+ * 功能：寻物/招领类型切换、校区选择、类别选项填充（“其他”可自定义）、
+ * 物品图片上传（本地压缩，最多 3 张）、地点快捷选择弹层、
+ * 表单校验（逐项提示）、保存到 localStorage 并跳转成功页。
  */
 (function () {
   'use strict';
+
+  var MAX_IMAGES = 3;
 
   Storage.initStorage();
 
   var form = UI.$('#publishForm');
   var typeInput = UI.$('#type');
   var typeOptions = UI.$all('.type-option');
+  var campusSelect = UI.$('#campus');
   var categorySelect = UI.$('#category');
+  var categoryCustom = UI.$('#categoryCustom');
+  var categoryError = UI.$('#categoryError');
   var timeInput = UI.$('#time');
+  var locationInput = UI.$('#location');
+  var imgInput = UI.$('#imgInput');
+  var imgPreviewList = UI.$('#imgPreviewList');
+  var imgAddBtn = UI.$('#imgAddBtn');
 
-  /* ---------- 初始化 ---------- */
+  // 已选图片（压缩后的 dataURL）
+  var images = [];
+  // 上一次已处理的文件框值，用于 change 事件去重
+  var lastProcessedFileValue = '';
 
-  // 填充类别
+  /* ---------- 校区：由首页选择，发布页直接读取，不再提供切换 ---------- */
+
+  campusSelect.value = Storage.getCampus();
+
+  /* ---------- 类别 ---------- */
+
   Storage.CATEGORIES.forEach(function (name) {
     var opt = document.createElement('option');
     opt.value = name;
@@ -24,7 +42,172 @@
     categorySelect.appendChild(opt);
   });
 
-  // 类型切换（我丢了 / 我捡到）
+  // 选择“其他”时显示自定义输入框
+  function syncCategoryCustom() {
+    var isOther = categorySelect.value === '其他';
+    categoryCustom.hidden = !isOther;
+    if (isOther) {
+      categoryCustom.focus();
+    } else {
+      categoryCustom.value = '';
+      categoryCustom.closest('.form-group').classList.remove('has-error');
+    }
+  }
+  categorySelect.addEventListener('change', function () {
+    syncCategoryCustom();
+    categorySelect.closest('.form-group').classList.remove('has-error');
+  });
+  categoryCustom.addEventListener('input', function () {
+    categoryCustom.closest('.form-group').classList.remove('has-error');
+  });
+
+  /** 取最终类别：其他 → 自定义文本 */
+  function getFinalCategory() {
+    if (categorySelect.value === '其他') return categoryCustom.value.trim();
+    return categorySelect.value;
+  }
+
+  /* ---------- 图片上传（压缩 + 预览） ---------- */
+
+  /** 将图片文件读取并压缩为 JPEG dataURL，避免超出 localStorage 容量 */
+  function compressImage(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var MAX_EDGE = 720;
+          var scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+          var w = Math.max(1, Math.round(img.width * scale));
+          var h = Math.max(1, Math.round(img.height * scale));
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          try {
+            resolve(canvas.toDataURL('image/jpeg', 0.72));
+          } catch (e) {
+            reject(e);
+          }
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /** 统一通过 hidden 属性控制预览显隐，避免与内联 display 互相覆盖 */
+  function renderImagePreview() {
+    imgPreviewList.innerHTML = '';
+    images.forEach(function (src, index) {
+      var item = document.createElement('div');
+      item.className = 'img-preview-item';
+
+      var img = document.createElement('img');
+      img.src = src;
+      img.alt = '物品图片 ' + (index + 1);
+      img.addEventListener('click', function () { openImageViewer(src); });
+      item.appendChild(img);
+
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'img-remove';
+      removeBtn.setAttribute('aria-label', '删除第 ' + (index + 1) + ' 张图片');
+      removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', function () {
+        images.splice(index, 1);
+        renderImagePreview();
+      });
+      item.appendChild(removeBtn);
+
+      imgPreviewList.appendChild(item);
+    });
+
+    // 达到上限时隐藏添加入口
+    imgAddBtn.hidden = images.length >= MAX_IMAGES;
+  }
+
+  imgInput.addEventListener('change', function () {
+    var files = Array.prototype.slice.call(imgInput.files || []);
+    if (files.length === 0) return;
+
+    // 去重守卫：个别自动化环境/浏览器会对同一次选择连续派发两次 change，
+    // input.value 相同则直接忽略，避免同一张图被加入两次
+    if (imgInput.value === lastProcessedFileValue) return;
+    lastProcessedFileValue = imgInput.value;
+
+    var remain = MAX_IMAGES - images.length;
+    if (files.length > remain) {
+      UI.toast('最多上传 ' + MAX_IMAGES + ' 张，已自动截取前 ' + remain + ' 张', 'error');
+      files = files.slice(0, remain);
+    }
+
+    files.reduce(function (p, file) {
+      return p.then(function () {
+        if (!/^image\//.test(file.type)) {
+          UI.toast('仅支持图片文件', 'error');
+          return;
+        }
+        return compressImage(file).then(function (dataUrl) {
+          images.push(dataUrl);
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      renderImagePreview();
+      imgInput.value = ''; // 允许再次选择同一文件
+      lastProcessedFileValue = '';
+    }).catch(function () {
+      UI.toast('图片读取失败，请换一张试试', 'error');
+      imgInput.value = '';
+      lastProcessedFileValue = '';
+    });
+  });
+
+  /* ---------- 地点快捷选择（原生 select） ---------- */
+
+  var locationQuickSelect = UI.$('#locationQuickSelect');
+
+  function renderLocationOptions() {
+    var campus = Storage.getCampus();
+    var locations = Storage.getCampusLocations(campus);
+    locationQuickSelect.innerHTML = '<option value="">快速选择</option>';
+    locations.forEach(function (name) {
+      var opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      locationQuickSelect.appendChild(opt);
+    });
+  }
+
+  renderLocationOptions();
+
+  locationQuickSelect.addEventListener('change', function () {
+    if (locationQuickSelect.value) {
+      locationInput.value = locationQuickSelect.value;
+      locationInput.closest('.form-group').classList.remove('has-error');
+    }
+    locationQuickSelect.value = '';
+  });
+
+  /* ---------- 全屏看图弹层（发布页预览用） ---------- */
+
+  function openImageViewer(src) {
+    var viewer = document.createElement('div');
+    viewer.className = 'img-viewer';
+    var img = document.createElement('img');
+    img.src = src;
+    img.alt = '物品图片大图';
+    viewer.appendChild(img);
+    viewer.addEventListener('click', function () {
+      document.body.removeChild(viewer);
+    });
+    document.body.appendChild(viewer);
+  }
+
+  /* ---------- 类型切换 ---------- */
+
   typeOptions.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var type = btn.getAttribute('data-type');
@@ -38,7 +221,8 @@
     });
   });
 
-  // 默认时间 = 当前时间（转成 datetime-local 需要的本地格式）
+  /* ---------- 默认时间 & 昵称 ---------- */
+
   function toLocalInputValue(d) {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
       String(d.getDate()).padStart(2, '0') + 'T' +
@@ -46,6 +230,11 @@
       String(d.getMinutes()).padStart(2, '0');
   }
   timeInput.value = toLocalInputValue(new Date());
+
+  // 预填个人中心里设置过的昵称
+  var publisherInput = UI.$('#publisher');
+  var savedNickname = Storage.getProfile().nickname;
+  if (savedNickname && savedNickname !== '福大同学') publisherInput.value = savedNickname;
 
   // 输入时清除该字段的错误态
   UI.$all('.form-control', form).forEach(function (control) {
@@ -61,39 +250,46 @@
 
   /* ---------- 校验 ---------- */
 
-  /** 标记某个字段出错并聚焦第一个出错字段 */
   function setError(fieldName, focus) {
     var group = form.querySelector('.form-group[data-field="' + fieldName + '"]');
     if (group) {
       group.classList.add('has-error');
       if (focus) {
-        var control = UI.$('.form-control', group);
+        var control = categorySelect.value === '其他' && fieldName === 'category'
+          ? categoryCustom
+          : UI.$('.form-control:not([hidden])', group);
         if (control) control.focus();
       }
     }
   }
 
-  /**
-   * 校验表单，返回 { ok, data }
-   * data 为清洗后的字段（去除首尾空格）。
-   */
   function validate(values) {
     var ok = true;
     var firstError = null;
 
-    function check(field, cond) {
+    function check(field, cond, errorMsg) {
       if (!cond) {
         setError(field, firstError === null);
+        if (errorMsg && field === 'category') categoryError.textContent = errorMsg;
         if (firstError === null) firstError = field;
         ok = false;
       }
     }
 
     check('title', values.title.length >= 1 && values.title.length <= 30);
-    check('category', values.category !== '');
+
+    // 类别：必选；选了“其他”时自定义类别需 1-10 个字
+    if (!values.category) {
+      check('category', false, '请选择物品类别');
+    } else if (values.category === '其他') {
+      check('category', false, '请选择物品类别');
+    } else if (categorySelect.value === '其他') {
+      var customLen = getFinalCategory().length;
+      check('category', customLen >= 1 && customLen <= 10, '请输入自定义类别（1-10 个字）');
+    }
+
     check('location', values.location.length >= 1 && values.location.length <= 50);
 
-    // 时间：必填且不能晚于当前
     var timeOk = false;
     if (values.time) {
       var t = new Date(values.time);
@@ -113,20 +309,21 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // 先清除旧错误态
     UI.$all('.form-group.has-error', form).forEach(function (g) {
       g.classList.remove('has-error');
     });
 
     var values = {
       type: typeInput.value,
+      campus: Storage.getCampus(),
       title: UI.$('#title').value.trim(),
-      category: categorySelect.value,
-      location: UI.$('#location').value.trim(),
+      category: getFinalCategory(),
+      location: locationInput.value.trim(),
       time: timeInput.value,
       description: UI.$('#description').value.trim(),
       contact: UI.$('#contact').value.trim(),
-      publisher: UI.$('#publisher').value.trim()
+      publisher: publisherInput.value.trim(),
+      images: images.slice()
     };
 
     var result = validate(values);
@@ -135,11 +332,18 @@
       return;
     }
 
-    var record = Storage.addItem(values);
-    UI.toast('🎉 发布成功');
-    // 短暂延迟后跳转到发布成功页，让用户看到成功提示
-    setTimeout(function () {
-      location.href = 'success.html?id=' + encodeURIComponent(record.id);
-    }, 600);
+    try {
+      var record = Storage.addItem(values);
+      UI.toast('🎉 发布成功');
+      setTimeout(function () {
+        location.href = 'success.html?id=' + encodeURIComponent(record.id);
+      }, 600);
+    } catch (err) {
+      // 大概率是图片过多导致 localStorage 溢出
+      console.error(err);
+      UI.toast('本地存储空间不足，请减少图片数量后重试', 'error');
+    }
   });
+
+  renderImagePreview();
 })();

@@ -12,14 +12,28 @@
 (function (global) {
   'use strict';
 
-  // 信息列表与“本机发布 id 列表”各自的存储 key
+  // 信息列表与“本机发布”id 列表各自的存储 key
   var ITEMS_KEY = 'lost_found_items_v1';
   var MINE_KEY = 'lost_found_mine_ids_v1';
   var FAVORITES_KEY = 'lost_found_favorites_v1'; // 收藏的信息 id 列表
   var PROFILE_KEY = 'lost_found_profile_v1';     // 个人资料（昵称等）
+  var CAMPUS_KEY = 'lost_found_campus_v1';       // 当前选中校区
 
   // 物品类别（与原型设计保持一致，后续新增类别只需改这里）
   var CATEGORIES = ['校园卡', '钥匙', '雨伞', '耳机', '水杯', '书籍', '其他'];
+
+  // 校区列表
+  var CAMPUSES = ['旗山校区', '铜盘校区', '晋江校区', '怡山校区', '厦门校区', '泉港校区'];
+
+  // 各校区“丢失/拾取地点”快捷选项
+  var CAMPUS_LOCATIONS = {
+    '旗山校区': ['晋江楼', '风雨操场', '教学区西', '教学区东', '图书馆'],
+    '铜盘校区': ['教学楼A', '教学楼B', '食堂', '操场', '篮球场'],
+    '晋江校区': ['教学楼A', '教学楼B', '图书馆', '食堂', '体育馆', '操场'],
+    '怡山校区': ['操场', '网球馆', '教学楼东', '教学楼西', '图书馆', '篮球馆', '食堂'],
+    '厦门校区': ['1号教学楼', '2号教学楼', '操场', '图书馆', '食堂', '篮球场', '排球场'],
+    '泉港校区': ['图书馆', '体育馆', '科学楼', '实验楼A', '实验楼B', '操场', '篮球场', '教学楼1', '教学楼2', '教学楼3']
+  };
 
   /** 生成唯一 id：时间戳 36 进制 + 随机串 */
   function genId() {
@@ -178,11 +192,13 @@
       type: data.type,
       title: data.title,
       category: data.category,
+      campus: data.campus || getCampus(),
       location: data.location,
       time: data.time,
       description: data.description,
       contact: data.contact,
       publisher: data.publisher,
+      images: Array.isArray(data.images) ? data.images : [],
       status: 'active',
       createdAt: Date.now()
     };
@@ -290,17 +306,48 @@
     return profile;
   }
 
+  /* ---------- 校区 ---------- */
+
+  /** 读取当前选中校区（默认旗山校区） */
+  function getCampus() {
+    var c = localStorage.getItem(CAMPUS_KEY);
+    return CAMPUSES.indexOf(c) !== -1 ? c : '旗山校区';
+  }
+
+  /** 切换当前校区 */
+  function setCampus(campus) {
+    if (CAMPUSES.indexOf(campus) === -1) return;
+    try { localStorage.setItem(CAMPUS_KEY, campus); } catch (e) { /* 忽略 */ }
+  }
+
+  /** 获取某校区的地点快捷选项 */
+  function getCampusLocations(campus) {
+    return (CAMPUS_LOCATIONS[campus] || []).slice();
+  }
+
+  /**
+   * 推断一条信息所属校区：
+   * 新数据有 campus 字段直接用；旧示例数据按地点文字推断（铜盘 → 铜盘校区，其余默认旗山）。
+   */
+  function itemCampus(item) {
+    if (item.campus) return item.campus;
+    return (item.location || '').indexOf('铜盘') !== -1 ? '铜盘校区' : '旗山校区';
+  }
+
   /** 清空全部本地数据（设置页用） */
   function clearAll() {
     localStorage.removeItem(ITEMS_KEY);
     localStorage.removeItem(MINE_KEY);
     localStorage.removeItem(FAVORITES_KEY);
     localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem(CAMPUS_KEY);
   }
 
   // 暴露到全局，页面脚本通过 Storage.xxx 调用
   global.Storage = {
     CATEGORIES: CATEGORIES,
+    CAMPUSES: CAMPUSES,
+    CAMPUS_LOCATIONS: CAMPUS_LOCATIONS,
     initStorage: initStorage,
     getItems: getItems,
     getItem: getItem,
@@ -314,6 +361,10 @@
     getFavoriteItems: getFavoriteItems,
     getProfile: getProfile,
     updateProfile: updateProfile,
+    getCampus: getCampus,
+    setCampus: setCampus,
+    getCampusLocations: getCampusLocations,
+    itemCampus: itemCampus,
     clearAll: clearAll
   };
 })(window);

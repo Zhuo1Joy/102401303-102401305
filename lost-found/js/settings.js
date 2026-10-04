@@ -42,6 +42,7 @@
   UI.$('#resetData').addEventListener('click', function () {
     if (!window.confirm('确定要清除全部数据吗？清除后将恢复为初始示例数据。')) return;
     Storage.clearAll();
+    if (window.Auth) Auth.logout(); // 同步清除登录态，下次打开首页会重新演示启动页/登录页
     Storage.initStorage();
     UI.toast('已恢复初始数据');
     setTimeout(function () { location.href = 'profile.html'; }, 600);

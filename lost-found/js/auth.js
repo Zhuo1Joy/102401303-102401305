@@ -1,14 +1,10 @@
 /**
  * auth.js —— 启动页 & 登录页引导逻辑（仅 index.html 引入）
  *
- * 【PR 拆分重建说明】
- * 本文件是“仅 UI 修改版（pr1-ui）”的重建版本：UI 阶段的 auth.js 从未提交 Git、
- * 也无快照留存，以下实现依据对话记录中可确认的行为重建——
- *   1. 每次打开 index.html 都展示：启动页（2.4s 或点击跳过）→ 登录页；
- *   2. “已有登录记录时显示‘点击任意位置进入’直接进首页”是后续功能阶段才提出的
- *      要求，故本版本启动时不读取登录态、不做首次/会话记忆；
- *   3. 登录表单与游客按钮的处理为登录页 HTML 结构所必需，予以保留。
- * 除上述已标注点外，视图切换、表单校验逻辑与后续版本一致。
+ * 流程：
+ * 1. 首次打开 index.html → 启动页（2.4s 或点击跳过）→ 登录页；
+ * 2. 登录成功 / 选择游客模式后记录本机登录态，进入首页；
+ * 3. 已有登录态时启动页显示“点击任意位置进入”，点击后直接进入首页。
  *
  * 说明：课程演示无真实后端，只做格式校验（学号 8-12 位、密码 ≥ 6 位）。
  */
@@ -37,9 +33,6 @@
       console.warn('保存登录态失败：', e);
     }
   }
-
-  // 保留引用以避免未使用告警；登录态直进逻辑在后续功能阶段才接入
-  void readAuth;
 
   /* ---------- 视图切换 ---------- */
 
@@ -72,24 +65,39 @@
 
   /* ---------- 初始化 ---------- */
 
+  var FIRST_OPEN_KEY = 'lost_found_first_open_v1';
+
   function init() {
     var splash = document.getElementById('splashView');
     var login = document.getElementById('loginView');
     if (!splash || !login) return;
 
+    // 不是首次打开：直接进入主界面
+    if (localStorage.getItem(FIRST_OPEN_KEY)) {
+      return;
+    }
+
+    // 标记已打开过
+    try { localStorage.setItem(FIRST_OPEN_KEY, '1'); } catch (e) { /* 忽略 */ }
+
     document.body.classList.add('gate-open');
     showView(splash);
 
+    var hasAuth = !!readAuth();
     var skipEl = document.getElementById('splashSkip');
-    if (skipEl) skipEl.textContent = '点击任意处跳过';
+    if (skipEl) skipEl.textContent = hasAuth ? '点击任意位置进入' : '点击任意处跳过';
 
     var enteredNext = false;
 
     function gotoNext() {
       if (enteredNext) return;
       enteredNext = true;
-      hideView(splash);
-      showView(login);
+      if (hasAuth) {
+        enterApp();
+      } else {
+        hideView(splash);
+        showView(login);
+      }
     }
 
     var timer = setTimeout(gotoNext, SPLASH_DURATION);
@@ -150,11 +158,12 @@
     init();
   }
 
-  // 暴露给设置页：清空数据时同步清除登录态
+  // 暴露给设置页：清空数据时同步清除登录态，便于重新演示引导流程
   global.Auth = {
     logout: function () {
       try {
         localStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem(FIRST_OPEN_KEY);
       } catch (e) { /* 忽略 */ }
     }
   };
