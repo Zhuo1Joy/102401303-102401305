@@ -20,15 +20,19 @@
   var listEl = UI.$('#itemList');
   var emptyEl = UI.$('#emptyState');
   var searchInput = UI.$('#searchInput');
-  var categoryFilter = UI.$('#categoryFilter');
+  var categoryPills = UI.$('#categoryPills');
 
-  /** 动态生成类别下拉项（类别统一在 storage.js 维护） */
-  function initCategoryOptions() {
-    Storage.CATEGORIES.forEach(function (name) {
-      var opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
-      categoryFilter.appendChild(opt);
+  /** 动态生成类别胶囊（全部 + 各类别） */
+  function initCategoryPills() {
+    var names = ['all'].concat(Storage.CATEGORIES);
+    names.forEach(function (name) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cat-pill' + (name === 'all' ? ' active' : '');
+      btn.setAttribute('data-category', name);
+      btn.setAttribute('role', 'tab');
+      btn.textContent = name === 'all' ? '全部' : name;
+      categoryPills.appendChild(btn);
     });
   }
 
@@ -88,12 +92,16 @@
     });
   });
 
-  // 类别筛选
-  categoryFilter.addEventListener('change', function () {
-    state.category = categoryFilter.value;
+  // 类别胶囊筛选
+  categoryPills.addEventListener('click', function (e) {
+    var pill = e.target.closest('.cat-pill');
+    if (!pill) return;
+    UI.$all('.cat-pill', categoryPills).forEach(function (p) { p.classList.remove('active'); });
+    pill.classList.add('active');
+    state.category = pill.getAttribute('data-category');
     render();
   });
 
-  initCategoryOptions();
+  initCategoryPills();
   render();
 })();

@@ -5,14 +5,14 @@
 
 /* ---------- 设计变量 ---------- */
 :root {
-  --primary: #d32f2f;          /* 主色：福大红 */
+  --primary: #c7161e;          /* 主色：福大红（Figma 设计稿） */
   --primary-light: #fdecea;
   --lost: #f26a3d;             /* 寻物：暖橙 */
   --lost-light: #fff0e9;
   --found: #15a05c;            /* 招领：青绿 */
   --found-light: #e7f7ef;
   --text-main: #1f2430;
-  --text-sub: #6b7280;
+  --text-sub: #6e7276;
   --line: #ececf1;
   --bg: #f4f5f9;
   --card-bg: #ffffff;
@@ -52,6 +52,11 @@ body {
   padding-bottom: calc(var(--nav-height) + 20px); /* 给底部导航留位 */
 }
 
+/* 首页列表底色：Figma 米白 #F6F7F4（仅首页，不影响其他页） */
+body[data-page="index"] .app {
+  background: #f6f7f4;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -75,23 +80,33 @@ input, select, textarea {
   display: none !important;
 }
 
-/* ---------- 顶部区域 ---------- */
+/* ---------- 顶部区域（白底 + 极淡水彩） ---------- */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 20;
-  /* 白楼红花水彩素材 + 红色半透明蒙版（约 75% 不透明，参考 figma 亮度） */
+  /* 白楼红花水彩 + 强白色蒙版压淡，接近白底 */
   background:
-    linear-gradient(135deg, rgba(229, 57, 53, 0.75), rgba(198, 40, 40, 0.78)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.88)),
     url('../img/building-flower.jpg') no-repeat center 35% / cover;
-  color: #fff;
+  color: var(--text-main);
   padding: 14px 16px 12px;
+}
+
+.header-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-right: 8px;
 }
 
 .app-header h1 {
   font-size: 19px;
   font-weight: 700;
-  margin-bottom: 0;
+  color: var(--primary);
+  margin: 0;
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -99,35 +114,34 @@ input, select, textarea {
   text-overflow: ellipsis;
 }
 
-/* 标题行：左标题、右校区切换 */
+/* 标题行：左校徽+标题、右校区切换 */
 .header-top {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .campus-select {
   flex-shrink: 0;
   max-width: 132px;
-  padding: 4px 8px;
+  padding: 5px 26px 5px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: #fff;
+  color: #5b87a6;
   font-size: 12px;
   line-height: 1.4;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid #e2e4ea;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235B87A6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
-  padding-right: 28px;
   cursor: pointer;
 }
 
 .campus-select:active {
-  background-color: rgba(255, 255, 255, 0.32);
+  background-color: #f4f6f9;
 }
 
 .campus-select option {
@@ -135,26 +149,14 @@ input, select, textarea {
   background: #fff;
 }
 
-.app-header .subtitle {
-  font-size: 12px;
-  opacity: 0.85;
-  margin-left: 6px;
-  font-weight: 400;
-}
-
 /* 搜索栏 */
 .search-bar {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: #f2f3f0;
   border-radius: 999px;
-  padding: 0 14px;
-  height: 40px;
-}
-
-.search-bar .search-icon {
-  font-size: 15px;
-  margin-right: 8px;
+  padding: 0 16px;
+  height: 38px;
 }
 
 .search-bar input {
@@ -162,7 +164,8 @@ input, select, textarea {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 14px;
+  color: var(--text-main);
 }
 
 /* 普通页面头部（发布/我的） */
@@ -203,37 +206,79 @@ input, select, textarea {
 /* ---------- Tab 与类别筛选 ---------- */
 .toolbar {
   background: #fff;
-  padding: 10px 16px;
+  padding: 6px 16px 10px;
   border-bottom: 1px solid var(--line);
   position: sticky;
-  top: 83px; /* 紧贴首页头部 */
+  top: 105px; /* 紧贴首页头部（header 含校徽+搜索栏） */
   z-index: 15;
 }
 
 .type-tabs {
   display: flex;
-  background: var(--bg);
-  border-radius: 999px;
-  padding: 3px;
+  gap: 22px;
   margin-bottom: 10px;
 }
 
 .type-tab {
-  flex: 1;
-  height: 34px;
-  line-height: 34px;
+  position: relative;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 2px;
   text-align: center;
-  border-radius: 999px;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-sub);
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
 
 .type-tab.active {
-  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* 红色短下划线 */
+.type-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+/* 类别胶囊（横滑） */
+.category-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.category-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #f2f3f0;
+  color: var(--text-sub);
+  font-size: 13px;
+  line-height: 28px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.cat-pill.active {
+  background: var(--primary-light);
   color: var(--primary);
   font-weight: 600;
-  box-shadow: 0 1px 4px rgba(31, 36, 48, 0.1);
 }
 
 .filter-row {
@@ -265,7 +310,8 @@ input, select, textarea {
 }
 
 .card {
-  display: block;
+  display: flex;
+  gap: 12px;
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 14px;
@@ -279,41 +325,46 @@ input, select, textarea {
   box-shadow: 0 1px 4px rgba(31, 36, 48, 0.08);
 }
 
-.card-top {
+/* 左侧类别图标块 */
+.card-icon {
+  flex-shrink: 0;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.badge {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 2px 10px;
-  border-radius: 999px;
-}
-
-.badge-lost {
-  color: var(--lost);
-  background: var(--lost-light);
-}
-
-.badge-found {
-  color: var(--found);
-  background: var(--found-light);
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .status {
+  flex-shrink: 0;
   font-size: 12px;
   font-weight: 600;
   padding: 2px 10px;
   border-radius: 999px;
+  white-space: nowrap;
 }
 
+/* 进行中：黄色胶囊（Figma 设计稿） */
 .status-active {
-  color: var(--primary);
-  background: var(--primary-light);
+  color: #efaa17;
+  background: #fdf3e0;
 }
 
 .status-done {
@@ -324,8 +375,7 @@ input, select, textarea {
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 6px;
-  /* 最多两行 */
+  color: var(--text-main);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -335,30 +385,36 @@ input, select, textarea {
 .card-desc {
   font-size: 13px;
   color: var(--text-sub);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+/* 单行 meta：校区（红粗）· 地点 · 相对时间 */
 .card-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-sub);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-campus {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .card-foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 9px;
+  padding-top: 8px;
   border-top: 1px dashed var(--line);
-  font-size: 12px;
-  color: var(--text-sub);
+  font-size: 11px;
+  color: #9a9ea6;
 }
 
 /* ---------- 空状态 ---------- */
@@ -706,14 +762,9 @@ textarea.form-control {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   color: var(--text-sub);
-  font-size: 11px;
-}
-
-.nav-item .nav-icon {
-  font-size: 21px;
-  line-height: 1;
+  font-size: 13px;
+  transition: color 0.15s;
 }
 
 .nav-item.active {
@@ -722,21 +773,40 @@ textarea.form-control {
 }
 
 /* 中间“发布”凸起按钮 */
-.nav-item.nav-publish .nav-icon {
-  font-size: 26px;
-  margin-top: -14px;
+.nav-item.nav-publish {
+  position: relative;
   width: 48px;
   height: 48px;
+  margin: -20px auto 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e53935, #c62828);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.35);
+  background: var(--primary);
+  box-shadow: 0 4px 10px rgba(199, 22, 30, 0.35);
+  flex: 0 0 auto;
 }
 
-.nav-item.nav-publish.active .nav-icon {
-  color: #fff;
+.nav-item.nav-publish::before,
+.nav-item.nav-publish::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #fff;
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+}
+
+.nav-item.nav-publish::before {
+  width: 18px;
+  height: 2.5px;
+}
+
+.nav-item.nav-publish::after {
+  width: 2.5px;
+  height: 18px;
+}
+
+.nav-item.nav-publish:active {
+  transform: scale(0.94);
 }
 
 /* ---------- Toast ---------- */
@@ -1036,7 +1106,7 @@ body.gate-open {
 .splash-view {
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--primary);
   text-align: center;
   overflow: hidden;
 }
@@ -1049,16 +1119,6 @@ body.gate-open {
   object-fit: cover;
 }
 
-/* 红色渐变遮罩：压住水彩图明度，保证文字可读、统一品牌色 */
-.splash-mask {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(198, 40, 40, 0.55) 0%,
-    rgba(183, 28, 28, 0.28) 42%,
-    rgba(127, 20, 20, 0.62) 100%);
-}
-
 .splash-content {
   position: relative;
   z-index: 1;
@@ -1068,49 +1128,37 @@ body.gate-open {
   padding: 0 24px;
 }
 
+/* 白底圆形校徽 */
 .splash-logo {
-  font-size: 84px;
-  line-height: 1;
-  margin-bottom: 18px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   animation: floatY 2.4s ease-in-out infinite;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+
+.splash-logo img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
 }
 
 .splash-title {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  color: var(--primary);
 }
 
 .splash-subtitle {
   font-size: 14px;
-  opacity: 0.95;
-  margin-bottom: 44px;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
-}
-
-.splash-bar {
-  width: 200px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 14px;
-}
-
-.splash-bar .bar-inner {
-  height: 100%;
-  width: 0;
-  background: #fff;
-  border-radius: 999px;
-  animation: loadBar 2.3s ease forwards;
-}
-
-.splash-skip {
-  font-size: 12px;
-  opacity: 0.85;
+  color: #6e7276;
 }
 
 .splash-footer {
@@ -1118,9 +1166,23 @@ body.gate-open {
   bottom: 22px;
   left: 0;
   right: 0;
-  font-size: 12px;
-  opacity: 0.85;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.splash-motto {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--primary);
+}
+
+.splash-skip {
+  font-size: 12px;
+  color: #9a9ea6;
 }
 
 @keyframes floatY {
@@ -1133,96 +1195,87 @@ body.gate-open {
   100% { width: 100%; }
 }
 
-/* ---------- 登录页 ---------- */
+/* ---------- 登录页（整屏浅色水彩） ---------- */
 .login-view {
-  background: var(--bg);
   overflow-y: auto;
 }
 
-.login-hero {
-  position: relative;
-  height: 236px;
-  flex-shrink: 0;
-}
-
 .login-bg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
+  z-index: 0;
 }
 
-.login-hero-mask {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(229, 57, 53, 0.12) 0%,
-    rgba(198, 40, 40, 0.42) 55%,
-    rgba(183, 28, 28, 0.78) 100%);
-}
-
-.login-hero-text {
-  position: absolute;
-  inset: 0;
+.login-scroll {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  color: #fff;
+  width: 100%;
+  padding: 56px 26px 30px;
+}
+
+/* 顶部品牌区 */
+.login-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
 }
 
 .login-logo {
-  font-size: 54px;
-  line-height: 1;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 72px;
+  text-align: center;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(199, 22, 30, 0.35);
 }
 
 .login-app-name {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: 2px;
+  color: var(--primary);
   margin-bottom: 6px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
 }
 
 .login-slogan {
   font-size: 13px;
-  opacity: 0.92;
+  color: #6e7276;
+  margin-bottom: 8px;
 }
 
-/* 白色圆角面板：上滑卡片叠在水彩图上 */
-.login-panel {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  margin-top: -18px;
-  border-radius: 20px 20px 0 0;
-  background: var(--bg);
-  box-shadow: 0 -4px 16px rgba(31, 36, 48, 0.08);
-  padding: 24px 22px 30px;
-}
-
-.login-title {
-  font-size: 21px;
-  font-weight: 700;
-}
-
-.login-tip {
+.login-motto {
   font-size: 13px;
-  color: var(--text-sub);
-  margin: 6px 0 18px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--primary);
 }
 
-/* 带图标的输入框容器 */
+.login-form {
+  width: 100%;
+}
+
+/* 输入框：白底半透明，在水彩图上保持可读 */
 .input-wrap {
   display: flex;
   align-items: center;
-  height: 46px;
-  background: #fff;
-  border: 1px solid #dcdfe8;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(220, 223, 232, 0.9);
   border-radius: 12px;
   padding: 0 12px;
+  backdrop-filter: blur(4px);
   transition: border-color 0.15s;
 }
 
@@ -1242,7 +1295,7 @@ body.gate-open {
 
 .input-wrap .form-control {
   flex: 1;
-  min-height: 44px;
+  min-height: 46px;
   border: none;
   background: transparent;
   padding: 0;
@@ -1271,7 +1324,11 @@ body.gate-open {
 
 .login-btn {
   margin-top: 4px;
-  background: linear-gradient(135deg, #e53935, #c62828);
+  height: 48px;
+  border-radius: 999px;
+  background: var(--primary);
+  font-size: 16px;
+  letter-spacing: 2px;
 }
 
 .login-links {
@@ -1279,10 +1336,16 @@ body.gate-open {
   text-align: center;
 }
 
+/* 游客链接改蓝色（Figma 稿风格） */
+.guest-btn {
+  color: #3b7ea1;
+  font-size: 13px;
+}
+
 .login-agreement {
-  margin-top: 26px;
+  margin-top: 30px;
   font-size: 11px;
-  color: var(--text-sub);
+  color: #8a8e96;
   text-align: center;
   line-height: 1.7;
 }
@@ -1598,21 +1661,21 @@ body.gate-open {
   font-weight: 700;
 }
 
-/* ---------- 卡片缩略图 ---------- */
+/* ---------- 卡片缩略图（弱化显示） ---------- */
 .card-imgs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  margin: 2px 0 10px;
+  margin: 2px 0 8px;
   padding-bottom: 2px;
 }
 
 .card-imgs img {
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--bg);
 }
 
