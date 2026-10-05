@@ -243,7 +243,38 @@ input, select, textarea {
 .type-tabs {
   display: flex;
   gap: 22px;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
+  gap: 10px;
+}
+
+/* 时间排序选择器（首页工具栏右侧） */
+.sort-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--bg);
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.sort-icon {
+  font-size: 14px;
+}
+
+.sort-select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  padding: 0;
 }
 
 .type-tab {
