@@ -44,6 +44,7 @@ body {
 
 /* App 容器：手机上铺满，宽屏下最大 480px 居中，带边界阴影模拟手机 */
 .app {
+  position: relative;
   max-width: 480px;
   min-height: 100vh;
   margin: 0 auto;
@@ -52,9 +53,35 @@ body {
   padding-bottom: calc(var(--nav-height) + 20px); /* 给底部导航留位 */
 }
 
-/* 首页列表底色：Figma 米白 #F6F7F4（仅首页，不影响其他页） */
+/* 首页背景中间嵌入半透明校徽水印（滚动时固定居中） */
+body[data-page="index"] .app::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  background: url('../img/logo.png') no-repeat center / contain;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 首页内容区置于水印之上（header/toolbar 已有 sticky + z-index，无需覆盖） */
+body[data-page="index"] .app > main {
+  position: relative;
+  z-index: 1;
+}
+
+/* 首页列表底色：Figma 米白 #F6F7F4（半透明，透出固定校徽水印） */
 body[data-page="index"] .app {
-  background: #f6f7f4;
+  background: rgba(246, 247, 244, 0.82);
+}
+
+/* 首页卡片半透明，让水印隐约透出 */
+body[data-page="index"] .card {
+  background: rgba(255, 255, 255, 0.82);
 }
 
 a {
@@ -85,9 +112,9 @@ input, select, textarea {
   position: sticky;
   top: 0;
   z-index: 20;
-  /* 白楼红花水彩 + 强白色蒙版压淡，接近白底 */
+  /* 白楼红花水彩 + 白色蒙版（降低蒙版透明度，使水彩更明显） */
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.88)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.45)),
     url('../img/building-flower.jpg') no-repeat center 35% / cover;
   color: var(--text-main);
   padding: 14px 16px 12px;
@@ -1109,6 +1136,7 @@ body.gate-open {
   color: var(--primary);
   text-align: center;
   overflow: hidden;
+  background: #fff; /* 白色底衬，配合半透明水彩图使背景更浅（Figma 设计稿） */
 }
 
 .splash-bg {
@@ -1117,6 +1145,7 @@ body.gate-open {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0.55; /* 降低水彩图不透明度，露出白底使背景更浅 */
 }
 
 .splash-content {
@@ -1198,6 +1227,7 @@ body.gate-open {
 /* ---------- 登录页（整屏浅色水彩） ---------- */
 .login-view {
   overflow-y: auto;
+  background: #fff; /* 白色底衬，配合半透明水彩图使背景更浅（Figma 设计稿） */
 }
 
 .login-bg {
@@ -1207,6 +1237,7 @@ body.gate-open {
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  opacity: 0.55; /* 降低水彩图不透明度，露出白底使背景更浅 */
 }
 
 .login-scroll {
