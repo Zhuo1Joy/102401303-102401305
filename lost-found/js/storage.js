@@ -13,11 +13,11 @@
   'use strict';
 
   // 信息列表与“本机发布”id 列表各自的存储 key
-  var ITEMS_KEY = 'lost_found_items_v1';
-  var MINE_KEY = 'lost_found_mine_ids_v1';
-  var FAVORITES_KEY = 'lost_found_favorites_v1'; // 收藏的信息 id 列表
-  var PROFILE_KEY = 'lost_found_profile_v1';     // 个人资料（昵称等）
-  var CAMPUS_KEY = 'lost_found_campus_v1';       // 当前选中校区
+  var ITEMS_KEY = 'lost_found_items_v2';
+  var MINE_KEY = 'lost_found_mine_ids_v2';
+  var FAVORITES_KEY = 'lost_found_favorites_v2'; // 收藏的信息 id 列表
+  var PROFILE_KEY = 'lost_found_profile_v2';     // 个人资料（昵称等）
+  var CAMPUS_KEY = 'lost_found_campus_v2';       // 当前选中校区
 
   // 物品类别（与原型设计保持一致，后续新增类别只需改这里）
   var CATEGORIES = ['校园卡', '钥匙', '雨伞', '耳机', '水杯', '书籍', '其他'];
@@ -147,6 +147,118 @@
         publisher: '晚自习同桌',
         status: 'done',
         createdAt: now - 50 * HOUR
+      },
+      {
+        id: 'seed-7',
+        type: 'lost',
+        campus: '晋江校区',
+        title: '黑色双肩书包',
+        category: '其他',
+        location: '晋江校区图书馆三楼',
+        time: new Date(now - 3 * HOUR).toISOString(),
+        description: '中午在三楼自习区离开时忘记带走，黑色耐克双肩包，里面有课本和一个蓝色笔袋。对我很重要，捡到请联系，谢谢！',
+        contact: 'QQ 112233445',
+        publisher: '晋江小黄',
+        status: 'active',
+        createdAt: now - 3 * HOUR
+      },
+      {
+        id: 'seed-8',
+        type: 'found',
+        campus: '晋江校区',
+        title: '一串宿舍钥匙（带小熊挂件）',
+        category: '钥匙',
+        location: '晋江校区食堂二楼',
+        time: new Date(now - 7 * HOUR).toISOString(),
+        description: '打饭时在靠窗座位上捡到的，银色钥匙串挂着棕色小熊公仔，还有一个门禁卡。已放在食堂服务台。',
+        contact: '微信 jinjiang_lost',
+        publisher: '食堂阿姨',
+        status: 'active',
+        createdAt: now - 7 * HOUR
+      },
+      {
+        id: 'seed-9',
+        type: 'lost',
+        campus: '怡山校区',
+        title: '蓝色折叠雨伞',
+        category: '雨伞',
+        location: '怡山校区教学楼东 302',
+        time: new Date(now - 4 * HOUR).toISOString(),
+        description: '上完课把伞落在教室了，蓝色三折伞，伞柄上有姓名贴写着"怡山小李"。最近老下雨，急需用伞。',
+        contact: '手机 139****8810',
+        publisher: '怡山小李',
+        status: 'active',
+        createdAt: now - 4 * HOUR
+      },
+      {
+        id: 'seed-10',
+        type: 'found',
+        campus: '怡山校区',
+        title: '红色校园卡一张',
+        category: '校园卡',
+        location: '怡山校区操场看台下',
+        time: new Date(now - 9 * HOUR).toISOString(),
+        description: '晨跑时在看台台阶上捡到一张校园卡，卡面有轻微划痕，姓名里有"婷"字。已放至操场值班室。',
+        contact: 'QQ 556677889',
+        publisher: '晨跑大叔',
+        status: 'active',
+        createdAt: now - 9 * HOUR
+      },
+      {
+        id: 'seed-11',
+        type: 'lost',
+        campus: '厦门校区',
+        title: '白色 AirPods Pro 充电盒',
+        category: '耳机',
+        location: '厦门校区 1 号教学楼 101',
+        time: new Date(now - 6 * HOUR).toISOString(),
+        description: '白色 AirPods Pro 充电盒，盒底刻了名字缩写"X.M."，耳机还在盒子里。上课时掉的，求好心人归还。',
+        contact: '微信 xiamen_stu',
+        publisher: '厦门小徐',
+        status: 'active',
+        createdAt: now - 6 * HOUR
+      },
+      {
+        id: 'seed-12',
+        type: 'found',
+        campus: '厦门校区',
+        title: '《线性代数》教材及笔记',
+        category: '书籍',
+        location: '厦门校区图书馆二楼',
+        time: new Date(now - 12 * HOUR).toISOString(),
+        description: '在二楼靠窗座位发现一本线代教材，夹了好几页手写笔记，笔记字迹工整。书已交图书馆前台。',
+        contact: 'QQ 998877665',
+        publisher: '图书馆志愿者',
+        status: 'done',
+        createdAt: now - 12 * HOUR
+      },
+      {
+        id: 'seed-13',
+        type: 'lost',
+        campus: '泉港校区',
+        title: '绿色运动水壶',
+        category: '水杯',
+        location: '泉港校区体育馆篮球场',
+        time: new Date(now - 2 * HOUR).toISOString(),
+        description: '打完球把水壶落在场边了，绿色 1L 运动水壶，壶身贴了"泉港阿强"的标签。天热没水喝太难受了。',
+        contact: '手机 137****5566',
+        publisher: '泉港阿强',
+        status: 'active',
+        createdAt: now - 2 * HOUR
+      },
+      {
+        id: 'seed-14',
+        type: 'found',
+        campus: '泉港校区',
+        title: '一串实验室钥匙（5把）',
+        category: '钥匙',
+        location: '泉港校区实验楼 A 大厅',
+        time: new Date(now - 11 * HOUR).toISOString(),
+        description: '在实验楼 A 座一楼大厅休息区捡到的，5 把钥匙挂在红色挂绳上，还有一个"实验中心"铭牌。已交实验楼门卫处。',
+        contact: 'QQ 445566778',
+        publisher: '实验楼保安',
+        status: 'active',
+        createdAt: now - 11 * HOUR
       }
     ];
   }

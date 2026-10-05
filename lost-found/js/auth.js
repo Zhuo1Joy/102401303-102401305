@@ -83,6 +83,12 @@
     document.body.classList.add('gate-open');
     showView(splash);
 
+    // 副标题动态填充当前选中校区
+    var subtitleEl = document.getElementById('splashSubtitle');
+    if (subtitleEl && global.Storage) {
+      subtitleEl.textContent = Storage.getCampus() + ' · 让每一件失物找到回家的路';
+    }
+
     var hasAuth = !!readAuth();
     var skipEl = document.getElementById('splashSkip');
     if (skipEl) skipEl.textContent = hasAuth ? '点击任意位置进入' : '点击任意处跳过';

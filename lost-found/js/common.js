@@ -31,6 +31,42 @@
   // 类型文案
   var TYPE_TEXT = { lost: '寻物', found: '招领' };
 
+  // 类别 → 卡片图标 emoji（与 Figma 设计稿一致）
+  var CATEGORY_ICONS = {
+    '校园卡': '💳',
+    '钥匙': '🔑',
+    '雨伞': '☂️',
+    '耳机': '🎧',
+    '水杯': '🥤',
+    '书籍': '📖'
+  };
+
+  function categoryIcon(category) {
+    return CATEGORY_ICONS[category] || '📦';
+  }
+
+  /**
+   * 相对时间格式化：刚刚 / X分钟前 / X小时前 / 昨天 / 日期。
+   * 入参兼容 ISO 字符串、datetime-local、时间戳、Date。
+   */
+  function formatRelativeTime(value) {
+    if (!value) return '';
+    var t = value instanceof Date ? value.getTime() : new Date(value).getTime();
+    if (isNaN(t)) return String(value);
+    var diff = Date.now() - t;
+    if (diff < 0) diff = 0;
+    var min = Math.floor(diff / 60000);
+    if (min < 1) return '刚刚';
+    if (min < 60) return min + '分钟前';
+    var hr = Math.floor(min / 60);
+    if (hr < 24) return hr + '小时前';
+    var day = Math.floor(hr / 24);
+    if (day === 1) return '昨天';
+    if (day < 7) return day + '天前';
+    var d = new Date(t);
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+
   /** 状态文案：done 时寻物显示“已找到”，招领显示“已归还” */
   function statusText(item) {
     if (item.status === 'done') {
@@ -84,8 +120,8 @@
 
   /** 渲染单条信息卡片（首页与“我的发布”共用） */
   function renderCard(item) {
-    var typeClass = item.type === 'lost' ? 'badge-lost' : 'badge-found';
     var statusClass = item.status === 'done' ? 'status-done' : 'status-active';
+    var campus = (global.Storage && Storage.itemCampus) ? Storage.itemCampus(item) : '';
     var imgs = Array.isArray(item.images) ? item.images : [];
     var imgHtml = imgs.length
       ? '<div class="card-imgs">' + imgs.map(function (src) {
@@ -94,20 +130,22 @@
       : '';
     return '' +
       '<a class="card" href="detail.html?id=' + encodeURIComponent(item.id) + '">' +
-        '<div class="card-top">' +
-          '<span class="badge ' + typeClass + '">' + TYPE_TEXT[item.type] + '</span>' +
-          '<span class="status ' + statusClass + '">' + statusText(item) + '</span>' +
-        '</div>' +
-        '<h3 class="card-title">' + escapeHtml(item.title) + '</h3>' +
-        '<p class="card-desc">' + escapeHtml(item.description) + '</p>' +
-        imgHtml +
-        '<div class="card-meta">' +
-          '<span class="meta-item">📍 ' + escapeHtml(item.location) + '</span>' +
-          '<span class="meta-item">🕐 ' + escapeHtml(formatDateTime(item.time)) + '</span>' +
-        '</div>' +
-        '<div class="card-foot">' +
-          '<span class="card-category">🏷 ' + escapeHtml(item.category) + '</span>' +
-          '<span class="card-publisher">👤 ' + escapeHtml(item.publisher) + '</span>' +
+        '<div class="card-icon">' + categoryIcon(item.category) + '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-head">' +
+            '<h3 class="card-title">' + escapeHtml(item.title) + '</h3>' +
+            '<span class="status ' + statusClass + '">' + statusText(item) + '</span>' +
+          '</div>' +
+          '<p class="card-desc">' + escapeHtml(item.description) + '</p>' +
+          imgHtml +
+          '<p class="card-meta">' +
+            (campus ? '<span class="meta-campus">' + escapeHtml(campus) + '</span> · ' : '') +
+            escapeHtml(item.location) + ' · ' + escapeHtml(formatRelativeTime(item.time)) +
+          '</p>' +
+          '<div class="card-foot">' +
+            '<span class="card-category">🏷 ' + escapeHtml(item.category) + '</span>' +
+            '<span class="card-publisher">👤 ' + escapeHtml(item.publisher) + '</span>' +
+          '</div>' +
         '</div>' +
       '</a>';
   }
